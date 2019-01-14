@@ -5,8 +5,11 @@ import (
 	"net"
 )
 
+var manifest map[string]entry
+
 func main() {
 	serverIP := ":7000"
+
 	tcpAddr, err := net.ResolveTCPAddr("tcp", serverIP)
 	checkerror(err)
 	listener, err := net.ListenTCP("tcp", tcpAddr)
@@ -52,5 +55,6 @@ func extractUsername(conn *net.TCPConn) string {
 	}
 	checkerror(err)
 	fmt.Println("New user entered chatroom : ", string(buffer[:n]))
+	AddUser(string(buffer[:n]), conn, manifest)
 	return string(buffer[:n])
 }

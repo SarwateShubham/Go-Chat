@@ -22,6 +22,8 @@ func main() {
 	_, err = conn.Write([]byte(username))
 	checkerror(err)
 	fmt.Println("You are now connected to the server")
+
+	
 	for {
 		message, _ = reader.ReadString('\n')
 		message = strings.TrimSuffix(message, "\n")
