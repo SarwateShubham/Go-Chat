@@ -8,8 +8,8 @@ import (
 var manifest map[string]entry
 
 func main() {
+	manifest = make(map[string]entry)
 	serverIP := ":7000"
-
 	tcpAddr, err := net.ResolveTCPAddr("tcp", serverIP)
 	checkerror(err)
 	listener, err := net.ListenTCP("tcp", tcpAddr)
@@ -43,6 +43,7 @@ func handleRequest(conn *net.TCPConn) {
 		}
 		checkerror(err)
 		fmt.Println(username, " : ", string(buffer[:n]))
+		go broadcastMessage(string(buffer[:n]), username)
 	}
 }
 
@@ -57,4 +58,13 @@ func extractUsername(conn *net.TCPConn) string {
 	fmt.Println("New user entered chatroom : ", string(buffer[:n]))
 	AddUser(string(buffer[:n]), conn, manifest)
 	return string(buffer[:n])
+}
+
+func broadcastMessage(msg string, username string) {
+
+	for _, v := range manifest {
+		data := username + "___" + msg
+		_, err := (v.Conn).Write([]byte(data))
+		checkerror(err)
+	}
 }

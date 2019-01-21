@@ -22,8 +22,7 @@ func main() {
 	_, err = conn.Write([]byte(username))
 	checkerror(err)
 	fmt.Println("You are now connected to the server")
-
-	
+	go waitForServer(conn)
 	for {
 		message, _ = reader.ReadString('\n')
 		message = strings.TrimSuffix(message, "\n")
@@ -37,5 +36,17 @@ func main() {
 func checkerror(err error) {
 	if err != nil {
 		fmt.Println("error reported in: ", err)
+	}
+}
+
+func waitForServer(Conn *net.TCPConn) {
+	buffer := make([]byte, 128)
+	for {
+		n, err := Conn.Read(buffer)
+		if n == 0 {
+			break
+		}
+		checkerror(err)
+		fmt.Println(string(buffer))
 	}
 }
